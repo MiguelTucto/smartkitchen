@@ -12,16 +12,22 @@ def decode_image(image_data):
 
 def detect_objects(image_data):
     image = decode_image(image_data)
+    print("Image decoded successfully.")
     results = yolo_model.predict(image)
+    print("Prediction results:", results)
     detected_products = []
 
     for result in results:
-        # Recorre cada detección en los resultados
         for box in result.boxes:
-            x1, y1, x2, y2 = box.xyxy[0].tolist()  # Asegura que obtenemos una lista de coordenadas
-            conf = box.conf[0].item()  # Convierte a un valor escalar
-            cls = box.cls[0].item()  # Convierte a un valor escalar
+            x1, y1, x2, y2 = box.xyxy[0].tolist()
+            conf = box.conf[0].item()
+            cls = box.cls[0].item()
             label = yolo_model.model.names[int(cls)]
-            detected_products.append({'name': label, 'confidence': float(conf)})
+            detected_products.append({
+                'name': label,
+                'confidence': float(conf),
+                'coordinates': {'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2}
+            })
+            print(f"Detected: {label} (Confidence: {conf}) at coordinates: {x1}, {y1}, {x2}, {y2}")
 
     return detected_products
