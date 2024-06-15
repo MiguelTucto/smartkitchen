@@ -6,6 +6,7 @@ from .model import YoloV8Model
 # Inicializa el modelo una vez para todo el proyecto
 yolo_model = YoloV8Model('../model/yolov8l.pt')
 
+HUMAN_CLASS_IDS = [0]
 def decode_image(image_data):
     image_data = base64.b64decode(image_data)
     return Image.open(BytesIO(image_data))
@@ -23,24 +24,25 @@ def detect_objects(image_data):
             conf = box.conf[0].item()
             cls = box.cls[0].item()
             label = yolo_model.model.names[int(cls)]
-            width = x2 - x1
-            height = y2 - y1
+            if int(cls) not in HUMAN_CLASS_IDS:  # Filtrar detecciones de humanos
+                width = x2 - x1
+                height = y2 - y1
 
-            detected_products.append({
-                'name': label,
-                'confidence': float(conf),
-                'coordinates': {
-                    'x1': x1,
-                    'y1': y1,
-                    'x2': x2,
-                    'y2': y2,
-                    'width': width,
-                    'height': height,
-                    'centerX': (x1 + x2) / 2,
-                    'centerY': (y1 + y2) / 2,
-                    'radius': max(width, height) / 2
-                }
-            })
-            print(f"Detected: {label} (Confidence: {conf}) at coordinates: {x1}, {y1}, {x2}, {y2}, with center at {detected_products[-1]['coordinates']['centerX']}, {detected_products[-1]['coordinates']['centerY']} and radius {detected_products[-1]['coordinates']['radius']}")
+                detected_products.append({
+                    'name': label,
+                    'confidence': float(conf),
+                    'coordinates': {
+                        'x1': x1,
+                        'y1': y1,
+                        'x2': x2,
+                        'y2': y2,
+                        'width': width,
+                        'height': height,
+                        'centerX': (x1 + x2) / 2,
+                        'centerY': (y1 + y2) / 2,
+                        'radius': max(width, height) / 2
+                    }
+                })
+                print(f"Detected: {label} (Confidence: {conf}) at coordinates: {x1}, {y1}, {x2}, {y2}, with center at {detected_products[-1]['coordinates']['centerX']}, {detected_products[-1]['coordinates']['centerY']} and radius {detected_products[-1]['coordinates']['radius']}")
 
     return detected_products
