@@ -7,12 +7,13 @@ from .model import YoloV8Model
 yolo_model = YoloV8Model('../model/yolov8l.pt')
 
 HUMAN_CLASS_IDS = [0]
-
+DINING_TABLE = [60]
 # Diccionario de traducción de labels
 LABEL_TRANSLATIONS = {
     "carrot": "Zanahoria",
     "apple": "Manzana",
     "car": "Coche",
+    "orange": "Naranja"
     # Agrega aquí más traducciones según tus necesidades
 }
 
@@ -36,7 +37,7 @@ def detect_objects(image_data):
             conf = box.conf[0].item()
             cls = box.cls[0].item()
             label = yolo_model.model.names[int(cls)]
-            if int(cls) not in HUMAN_CLASS_IDS:  # Filtrar detecciones de humanos
+            if int(cls) not in HUMAN_CLASS_IDS and int(cls) not in DINING_TABLE:  # Filtrar detecciones de humanos
                 translated_label = translate_label(label)
                 width = x2 - x1
                 height = y2 - y1
