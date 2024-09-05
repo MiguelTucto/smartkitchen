@@ -15,7 +15,8 @@ LABEL_TRANSLATIONS = {
     "carrot": "Zanahoria",
     "apple": "Manzana",
     "car": "Coche",
-    "orange": "Naranja"
+    "orange": "Naranja",
+    "banana": "Plátano"
     # Agrega aquí más traducciones según tus necesidades
 }
 
