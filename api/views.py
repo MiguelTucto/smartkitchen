@@ -30,14 +30,10 @@ class ProductDetectionView(APIView):
 @api_view(['POST'])
 def create_user(request):
     first_name = request.data.get('first_name')
-    birth_date = request.data.get('birth_date')
-    preferred_cuisines = request.data.get('preferred_cuisines')
 
     user = User.objects.create(username=first_name)
     user_profile = UserProfile.objects.create(
         first_name=first_name,
-        birth_date=birth_date,
-        preferred_cuisines=preferred_cuisines
     )
 
     return JsonResponse({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
@@ -50,8 +46,6 @@ def update_user(request, user_id):
         return JsonResponse({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
     user_profile.first_name = request.data.get('first_name', user_profile.name)
-    user_profile.birth_date = request.data.get('birth_date', user_profile.birth_date)
-    user_profile.preferred_cuisines = request.data.get('preferred_cuisines', user_profile.preferred_cuisines)
     user_profile.save()
 
     return JsonResponse({'message': 'User updated successfully'}, status=status.HTTP_200_OK)
@@ -62,6 +56,8 @@ def create_favorite_recipe(request):
     title = request.data.get('title')
     ingredients = request.data.get('ingredients')
     preparation = request.data.get('preparation')
+    cook_time = request.data.get('cook_time')
+    level = request.data.get('level')
 
     try:
         user = UserProfile.objects.get(id=user_id)
@@ -72,7 +68,9 @@ def create_favorite_recipe(request):
         user=user,
         title=title,
         ingredients=ingredients,
-        preparation=preparation
+        preparation=preparation,
+        cook_time=cook_time,
+        level=level
     )
 
     return JsonResponse({'message': 'Recipe saved as favorite'}, status=status.HTTP_201_CREATED)

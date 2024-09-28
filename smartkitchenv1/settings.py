@@ -87,7 +87,7 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'smartkitchendbv4',
+        'NAME': 'smartkitchendb',
         'USER': 'postgres',
         'PASSWORD': 'miguel2cto',
         'HOST': 'localhost',

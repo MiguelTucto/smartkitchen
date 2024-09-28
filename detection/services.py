@@ -4,19 +4,22 @@ from PIL import Image
 from .model import YoloV8Model
 
 # Inicializa el modelo una vez para todo el proyecto
-yolo_model = YoloV8Model('../model/yolov8n.pt')
+yolo_model = YoloV8Model('../model/last.pt')
+
 
 HUMAN_CLASS_IDS = [0]
 DINING_TABLE = [60]
 HOT_DOG = [52]
 DONUT = [54]
+CHAIR = [57]
+COUCH = [56]
 # Diccionario de traducción de labels
 LABEL_TRANSLATIONS = {
     "carrot": "Zanahoria",
-    "apple": "Manzana",
-    "car": "Coche",
-    "orange": "Naranja",
-    "banana": "Plátano"
+    "Apple": "Manzana",
+    "Orange": "Naranja",
+    "banana": "Plátano",
+    "Tomato": "Tomate"
     # Agrega aquí más traducciones según tus necesidades
 }
 
@@ -40,29 +43,27 @@ def detect_objects(image_data):
             conf = box.conf[0].item()
             cls = box.cls[0].item()
             label = yolo_model.model.names[int(cls)]
-            if int(cls) not in HUMAN_CLASS_IDS and int(cls) not in DINING_TABLE and int(cls) not in DONUT and int(cls) not in HOT_DOG:  # Filtrar detecciones de humanos
-                translated_label = translate_label(label)
-                width = x2 - x1
-                height = y2 - y1
-                centerX = (x1 + x2) / 2
-                centerY = (y1 + y2) / 2
-                radius = max(width, height) / 2
-
-                detected_products.append({
-                    'name': translated_label,
-                    'confidence': float(conf),
-                    'coordinates': {
-                        'x1': x1,
-                        'y1': y1,
-                        'x2': x2,
-                        'y2': y2,
-                        'width': width,
-                        'height': height,
-                        'centerX': (x1 + x2) / 2,
-                        'centerY': (y1 + y2) / 2,
-                        'radius': max(width, height) / 2
-                    }
-                })
-                print(f"Detected: {translated_label} (Confidence: {conf}) at coordinates: {x1}, {y1}, {x2}, {y2}, with center at {centerX}, {centerY} and radius {radius}")
+            translated_label = translate_label(label)
+            width = x2 - x1
+            height = y2 - y1
+            centerX = (x1 + x2) / 2
+            centerY = (y1 + y2) / 2
+            radius = max(width, height) / 2
+            detected_products.append({
+                'name': translated_label,
+                'confidence': float(conf),
+                'coordinates': {
+                    'x1': x1,
+                    'y1': y1,
+                    'x2': x2,
+                    'y2': y2,
+                    'width': width,
+                    'height': height,
+                    'centerX': (x1 + x2) / 2,
+                    'centerY': (y1 + y2) / 2,
+                    'radius': max(width, height) / 2
+                }
+            })
+            print(f"Detected: {translated_label} (Confidence: {conf}) at coordinates: {x1}, {y1}, {x2}, {y2}, with center at {centerX}, {centerY} and radius {radius}")
 
     return detected_products
